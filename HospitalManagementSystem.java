@@ -2,73 +2,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class Patient {
-    private int id;
-    private String name;
-    private int age;
-    private String gender;
-    private String ailment;
-    private double billAmount;
-    private boolean isPaid;
-
-    public Patient(int id, String name, int age, String gender, String ailment) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.gender = gender;
-        this.ailment = ailment;
-        this.billAmount = 0.0;
-        this.isPaid = false;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getBillAmount() {
-        return billAmount;
-    }
-
-    public boolean isPaid() {
-        return isPaid;
-    }
-
-    public void addBillAmount(double amount) {
-        this.billAmount += amount;
-    }
-
-    public void markAsPaid() {
-        this.isPaid = true;
-    }
-
-    @Override
-    public String toString() {
-        return "ID: " + id + ", Name: " + name + ", Age: " + age + ", Gender: " + gender +
-                ", Ailment: " + ailment + ", Bill Amount: $" + billAmount + ", Paid: " + isPaid;
-    }
-}
-
 public class HospitalManagementSystem {
     private static Scanner scanner = new Scanner(System.in);
     private static List<Patient> patients = new ArrayList<>();
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println("Hospital Management System");
-            System.out.println("1. Register Patient");
-            System.out.println("2. View Patient Records");
-            System.out.println("3. Search Patient Records");
-            System.out.println("4. Manage Patient Records");
-            System.out.println("5. Billing and Payment");
-            System.out.println("6. Exit");
-            System.out.print("Select an option: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            displayMenu();
+            int choice = getUserChoice();
 
             switch (choice) {
                 case 1:
@@ -94,6 +35,23 @@ public class HospitalManagementSystem {
                     System.out.println("Invalid option. Please try again.");
             }
         }
+    }
+
+    private static void displayMenu() {
+        System.out.println("Hospital Management System");
+        System.out.println("1. Register Patient");
+        System.out.println("2. View Patient Records");
+        System.out.println("3. Search Patient Records");
+        System.out.println("4. Manage Patient Records");
+        System.out.println("5. Billing and Payment");
+        System.out.println("6. Exit");
+        System.out.print("Select an option: ");
+    }
+
+    private static int getUserChoice() {
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        return choice;
     }
 
     private static void registerPatient() {
@@ -138,8 +96,7 @@ public class HospitalManagementSystem {
         System.out.println("2. Search by Name");
         System.out.print("Select an option: ");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice = getUserChoice();
 
         switch (choice) {
             case 1:
@@ -196,8 +153,7 @@ public class HospitalManagementSystem {
         System.out.println("2. Delete Patient Records");
         System.out.print("Select an option: ");
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice = getUserChoice();
 
         switch (choice) {
             case 1:
@@ -216,32 +172,27 @@ public class HospitalManagementSystem {
         int id = scanner.nextInt();
         scanner.nextLine();
 
-        boolean found = false;
-        for (Patient patient : patients) {
-            if (patient.getId() == id) {
-                System.out.print("Enter New Name: ");
-                String newName = scanner.nextLine();
-                patient.setName(newName);
+        Patient patient = findPatientById(id);
+        if (patient != null) {
+            System.out.print("Enter New Name: ");
+            String newName = scanner.nextLine();
+            patient.setName(newName);
 
-                System.out.print("Enter New Age: ");
-                int newAge = scanner.nextInt();
-                scanner.nextLine();
-                patient.setAge(newAge);
+            System.out.print("Enter New Age: ");
+            int newAge = scanner.nextInt();
+            scanner.nextLine();
+            patient.setAge(newAge);
 
-                System.out.print("Enter New Gender: ");
-                String newGender = scanner.nextLine();
-                patient.setGender(newGender);
+            System.out.print("Enter New Gender: ");
+            String newGender = scanner.nextLine();
+            patient.setGender(newGender);
 
-                System.out.print("Enter New Ailment: ");
-                String newAilment = scanner.nextLine();
-                patient.setAilment(newAilment);
+            System.out.print("Enter New Ailment: ");
+            String newAilment = scanner.nextLine();
+            patient.setAilment(newAilment);
 
-                System.out.println("Patient details updated successfully.\n");
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+            System.out.println("Patient details updated successfully.\n");
+        } else {
             System.out.println("No patient found with ID: " + id + "\n");
         }
     }
@@ -265,33 +216,25 @@ public class HospitalManagementSystem {
         int id = scanner.nextInt();
         scanner.nextLine();
 
-        Patient patient = null;
-        for (Patient p : patients) {
-            if (p.getId() == id) {
-                patient = p;
-                break;
+        Patient patient = findPatientById(id);
+        if (patient != null) {
+            System.out.println("Enter service charges to add to the bill:");
+            double charges = scanner.nextDouble();
+            scanner.nextLine();
+            patient.addBillAmount(charges);
+
+            System.out.println("Total Bill Amount: $" + patient.getBillAmount());
+
+            System.out.println("Do you want to process the payment? (yes/no): ");
+            String response = scanner.nextLine();
+
+            if (response.equalsIgnoreCase("yes")) {
+                processPayment(patient);
+            } else {
+                System.out.println("Payment not processed.\n");
             }
-        }
-
-        if (patient == null) {
-            System.out.println("No patient found with ID: " + id);
-            return;
-        }
-
-        System.out.println("Enter service charges to add to the bill:");
-        double charges = scanner.nextDouble();
-        patient.addBillAmount(charges);
-
-        System.out.println("Total Bill Amount: $" + patient.getBillAmount());
-
-        System.out.println("Do you want to process the payment? (yes/no): ");
-        scanner.nextLine();
-        String response = scanner.nextLine();
-
-        if (response.equalsIgnoreCase("yes")) {
-            processPayment(patient);
         } else {
-            System.out.println("Payment not processed.\n");
+            System.out.println("No patient found with ID: " + id);
         }
     }
 
@@ -306,5 +249,14 @@ public class HospitalManagementSystem {
         } else {
             System.out.println("Insufficient payment. Payment not processed.\n");
         }
+    }
+
+    private static Patient findPatientById(int id) {
+        for (Patient patient : patients) {
+            if (patient.getId() == id) {
+                return patient;
+            }
+        }
+        return null;
     }
 }
