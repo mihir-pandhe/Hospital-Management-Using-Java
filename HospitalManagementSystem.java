@@ -8,6 +8,8 @@ class Patient {
     private int age;
     private String gender;
     private String ailment;
+    private double billAmount;
+    private boolean isPaid;
 
     public Patient(int id, String name, int age, String gender, String ailment) {
         this.id = id;
@@ -15,31 +17,38 @@ class Patient {
         this.age = age;
         this.gender = gender;
         this.ailment = ailment;
+        this.billAmount = 0.0;
+        this.isPaid = false;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public double getBillAmount() {
+        return billAmount;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public boolean isPaid() {
+        return isPaid;
     }
 
-    public void setAilment(String ailment) {
-        this.ailment = ailment;
+    public void addBillAmount(double amount) {
+        this.billAmount += amount;
+    }
+
+    public void markAsPaid() {
+        this.isPaid = true;
     }
 
     @Override
     public String toString() {
-        return "ID: " + id + ", Name: " + name + ", Age: " + age + ", Gender: " + gender + ", Ailment: " + ailment;
+        return "ID: " + id + ", Name: " + name + ", Age: " + age + ", Gender: " + gender +
+                ", Ailment: " + ailment + ", Bill Amount: $" + billAmount + ", Paid: " + isPaid;
     }
 }
 
@@ -75,7 +84,7 @@ public class HospitalManagementSystem {
                     managePatientRecords();
                     break;
                 case 5:
-                    System.out.println("Billing and Payment functionality will be implemented in Version 6.");
+                    billingAndPayment();
                     break;
                 case 6:
                     System.out.println("Exiting the system.");
@@ -248,6 +257,54 @@ public class HospitalManagementSystem {
             System.out.println("Patient record deleted successfully.\n");
         } else {
             System.out.println("No patient found with ID: " + id + "\n");
+        }
+    }
+
+    private static void billingAndPayment() {
+        System.out.print("Enter Patient ID for Billing: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Patient patient = null;
+        for (Patient p : patients) {
+            if (p.getId() == id) {
+                patient = p;
+                break;
+            }
+        }
+
+        if (patient == null) {
+            System.out.println("No patient found with ID: " + id);
+            return;
+        }
+
+        System.out.println("Enter service charges to add to the bill:");
+        double charges = scanner.nextDouble();
+        patient.addBillAmount(charges);
+
+        System.out.println("Total Bill Amount: $" + patient.getBillAmount());
+
+        System.out.println("Do you want to process the payment? (yes/no): ");
+        scanner.nextLine();
+        String response = scanner.nextLine();
+
+        if (response.equalsIgnoreCase("yes")) {
+            processPayment(patient);
+        } else {
+            System.out.println("Payment not processed.\n");
+        }
+    }
+
+    private static void processPayment(Patient patient) {
+        System.out.println("Enter payment amount: ");
+        double payment = scanner.nextDouble();
+        scanner.nextLine();
+
+        if (payment >= patient.getBillAmount()) {
+            patient.markAsPaid();
+            System.out.println("Payment successful. Bill is marked as paid.\n");
+        } else {
+            System.out.println("Insufficient payment. Payment not processed.\n");
         }
     }
 }
