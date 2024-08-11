@@ -57,7 +57,7 @@ public class HospitalManagementSystem {
                     viewPatientRecords();
                     break;
                 case 3:
-                    System.out.println("Search Patient Records functionality will be implemented in Version 4.");
+                    searchPatientRecords();
                     break;
                 case 4:
                     System.out.println("Manage Patient Records functionality will be implemented in Version 5.");
@@ -99,6 +99,18 @@ public class HospitalManagementSystem {
         System.out.println("Patient registered successfully.\n");
     }
 
+    private static void viewPatientRecords() {
+        if (patients.isEmpty()) {
+            System.out.println("No patient records found.\n");
+        } else {
+            System.out.println("Patient Records:");
+            for (Patient patient : patients) {
+                System.out.println(patient);
+            }
+            System.out.println();
+        }
+    }
+
     private static void searchPatientRecords() {
         System.out.println("Search Patient Records");
         System.out.println("1. Search by ID");
@@ -120,15 +132,40 @@ public class HospitalManagementSystem {
         }
     }
 
-    private static void viewPatientRecords() {
-        if (patients.isEmpty()) {
-            System.out.println("No patient records found.\n");
-        } else {
-            System.out.println("Patient Records:");
-            for (Patient patient : patients) {
-                System.out.println(patient);
+    private static void searchById() {
+        System.out.print("Enter Patient ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        boolean found = false;
+        for (Patient patient : patients) {
+            if (patient.getId() == id) {
+                System.out.println("Patient found: " + patient);
+                found = true;
+                break;
             }
-            System.out.println();
         }
+        if (!found) {
+            System.out.println("No patient found with ID: " + id);
+        }
+        System.out.println();
+    }
+
+    private static void searchByName() {
+        System.out.print("Enter Patient Name: ");
+        String name = scanner.nextLine();
+
+        boolean found = false;
+        for (Patient patient : patients) {
+            if (patient.getName().equalsIgnoreCase(name)) {
+                System.out.println("Patient found: " + patient);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("No patient found with name: " + name);
+        }
+        System.out.println();
     }
 }
