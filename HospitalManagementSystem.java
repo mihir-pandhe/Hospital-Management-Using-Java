@@ -17,17 +17,17 @@ class Patient {
         this.ailment = ailment;
     }
 
-    @Override
-    public String toString() {
-        return "ID: " + id + ", Name: " + name + ", Age: " + age + ", Gender: " + gender + ", Ailment: " + ailment;
-    }
-
     public int getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + id + ", Name: " + name + ", Age: " + age + ", Gender: " + gender + ", Ailment: " + ailment;
     }
 }
 
@@ -54,7 +54,7 @@ public class HospitalManagementSystem {
                     registerPatient();
                     break;
                 case 2:
-                    System.out.println("View Patient Records functionality will be implemented in Version 3.");
+                    viewPatientRecords();
                     break;
                 case 3:
                     System.out.println("Search Patient Records functionality will be implemented in Version 4.");
@@ -97,5 +97,38 @@ public class HospitalManagementSystem {
         patients.add(newPatient);
 
         System.out.println("Patient registered successfully.\n");
+    }
+
+    private static void searchPatientRecords() {
+        System.out.println("Search Patient Records");
+        System.out.println("1. Search by ID");
+        System.out.println("2. Search by Name");
+        System.out.print("Select an option: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                searchById();
+                break;
+            case 2:
+                searchByName();
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+    }
+
+    private static void viewPatientRecords() {
+        if (patients.isEmpty()) {
+            System.out.println("No patient records found.\n");
+        } else {
+            System.out.println("Patient Records:");
+            for (Patient patient : patients) {
+                System.out.println(patient);
+            }
+            System.out.println();
+        }
     }
 }
